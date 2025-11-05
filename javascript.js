@@ -23,22 +23,24 @@
     Maybe use a loop to iterate through rounds. 
 */
 
-function getComputerChoice(){
-    const choices = ["Rock", "Paper", "Scissors"]
-    const choiceSelection = Math.floor(Math.random() * choices.length)
-    const compChoice = choices[choiceSelection]
-    console.log(compChoice)
-    return compChoice;
+function getComputerChoice() {
+  const choices = ["Rock", "Paper", "Scissors"];
+  const choiceSelection = Math.floor(Math.random() * choices.length);
+  const compChoice = choices[choiceSelection];
+//   console.log(compChoice);
+  return compChoice;
 }
 
-function getPlayerChoice(){
-    let playerSelection = window.prompt("Select one: Rock, Paper, or Scissors", "") 
-    const selectionFirstLetter = playerSelection.charAt(0).toUpperCase();
-    const selectionRemainingLetters = playerSelection.substring(1).toLowerCase();
-    const playerChoice = `${selectionFirstLetter}${selectionRemainingLetters}`;
-    console.log(playerChoice)
-    return playerChoice
-}
+const rock = document.getElementById("rockBtn");
+const paper = document.getElementById("paperBtn");
+const scissors = document.getElementById("scissorsBtn");
+
+const playerScoreText = document.getElementById("player-score");
+const computerScoreText = document.getElementById("computer-score");
+
+const endingMessage = document.getElementById("ending-message");
+const endingScreen = document.querySelector(".ending-screen")
+endingScreen.style.display = "none";
 
 // function playRound(player, computer){
 //     let player = ;
@@ -48,44 +50,112 @@ function getPlayerChoice(){
 // }
 let playerScore = 0;
 let computerScore = 0;
+let round = 0;
 
-const playRounds = (p, c) => {
-    
-    p = getPlayerChoice();
-    c = getComputerChoice()
+function playRounds(p, c)  {
+    console.log(p)
+    console.log(c)
+  const message = document.querySelector(".message");
+  const rockWin = p === "Rock" && c === "Scissors";
+  const scissorWin = p === "Scissors" && c === "Paper";
+  const paperWin = p === "Paper" && c === "Rock";
 
-    const rockWin = (p === "Rock" && c === "Scissors");
-    const scissorWin = (p === "Scissors" && c === "Paper");
-    const paperWin = (p === "Paper" && c === "Rock");
+  const rockLoss = p === "Rock" && c === "Paper";
+  const scissorLoss = p === "Scissors" && c === "Rock";
+  const paperLoss = p === "Paper" && c === "Scissors";
 
-    const rockLoss = (p === "Rock" && c === "Paper");
-    const scissorLoss = (p === "Scissors" && c === "Rock");
-    const paperLoss = (p === "Paper" && c === "Scissors");
 
-    if (rockWin || scissorWin || paperWin) {
-        console.log(`You win! ${p} beats ${c}`)
-        playerScore++;
-        console.log(`Player: ${playerScore} || Computer: ${computerScore}`)
-    }else if (rockLoss || scissorLoss || paperLoss){
-        console.log(`You lose! ${c} beats ${p} `)
-        computerScore++;
-        console.log(`Player: ${playerScore} || Computer: ${computerScore}`)
+
+  if (rockWin || scissorWin || paperWin) {
+    message.textContent = `You win! ${p} beats ${c}`;
+    playerScore++;
+    playerScoreText.textContent = playerScore.toString();
+    console.log(`Player: ${playerScore} || Computer: ${computerScore}`);
+  } else if (rockLoss || scissorLoss || paperLoss) {
+    message.textContent = `You lose! ${c} beats ${p}`;
+    computerScore++;
+    computerScoreText.textContent = computerScore.toString();
+    console.log(`Player: ${playerScore} || Computer: ${computerScore}`);
+  } else {
+    message.textContent = "You tied!";
+    console.log(`You tied!`);
+  }
+//   console.log(round);
+
+  round++;
+    const playerWin = playerScore === 3;
+  const computerWin = computerScore === 3;
+
+  if (playerWin){
+    endingMessage.textContent = "Congratulations you win!"
+    gameOver();
+    return;
+  } else if(computerWin){
+    endingMessage.textContent = "Computer wins! Better luck next time.";
+    gameOver();
+    return;
+  } else if (round === 5){
+    if (playerScore > computerScore){
+        endingMessage.textContent = `You win ${playerScore}-${computerScore}`
+        gameOver()
+    }else if (computerScore > playerScore) {
+        endingMessage.textContent =  `You lose ${playerScore}-${computerScore}`
+        gameOver();
     } else {
-        console.log(`You tied!`)
+        endingMessage.textContent = "Draw!"
+        gameOver();
     }
+  }
+};
+
+const resetButton = document.getElementById("reset-button")
+
+
+function refresh(){
+    location.reload()
 }
 
-function startGame(){
-    for (let i = 1; i < 6; i++) {
-        console.log("Round: " + (i))
-        playRounds();        
-    }
+function gameOver(){
+    endingScreen.style.display = "flex";
+
+    rock.style.display = 'none';
+    paper.style.display = 'none';
+    scissors.style.display = 'none';
+
+    resetButton.style.display = 'block';
+    resetButton.addEventListener("click", refresh)
+    
 }
 
-const button = document.querySelector("button")
-button.addEventListener("click", startGame)
+// function startGame() {
+//   for (let i = 1; i < 6; i++) {
+//     console.log("Round: " + i);
+//     playRounds();
+//   }
+// }
+
+// const buttonContainer = document.getElementById("button-container")
+
+// buttonContainer.addEventListener("click", function(e) {
+//     if (e.target.matches('button')) {
+//         if (e.target.textContent === 'Rock') {
+//             console.log("Rock")
+//         }
+//     }
+// });
+
+rock.addEventListener("click", function(){
+    playRounds("Rock", getComputerChoice())
+});
+
+paper.addEventListener("click", function(){
+    playRounds("Paper", getComputerChoice());
+});
+
+scissors.addEventListener("click", function(){
+    playRounds("Scissors", getComputerChoice());
+});
 
 
-
-
-
+// const button = document.querySelector("button");
+// button.addEventListener("click", startGame);
